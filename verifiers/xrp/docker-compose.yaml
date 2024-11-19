@@ -1,0 +1,42 @@
+
+
+services:
+  database:
+    container_name: indexer-xrp-database
+    image: postgres:16
+    env_file:
+      - xrp-indexer.env
+    ports:
+      - 127.0.0.1:55432:5432
+    restart: unless-stopped
+    volumes:
+      - xrp-indexer-database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+
+  indexer:
+    container_name: indexer-xrp-indexer
+    image: verifier-xrp-indexer
+    environment:
+      DB_PORT: 5432
+      DB_HOST: database
+    depends_on:
+      - database
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml
+
+  verification-server:
+    image: verifier-indexer-api
+    container_name: indexer-xrp-verifier
+    env_file:
+      - verifier-api.env
+    depends_on:
+      - database
+    restart: unless-stopped
+    ports:
+      - 9505:3100
+
+
+volumes:
+  xrp-indexer-database:

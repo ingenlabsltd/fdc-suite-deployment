@@ -1,0 +1,19 @@
+[db]
+username = "xrpindexer"
+password = "change_this"
+db_name = "xrpindexer"
+host = "database"
+port = 5432
+drop_table_at_start = false
+
+[indexer]
+confirmations = 0
+max_block_range = 100
+max_concurrency = 10
+start_block_number = 1027000
+
+[blockchain]
+url = "node_rpc"
+
+[timeout]
+timeout_millis = 3000

@@ -1,0 +1,80 @@
+
+
+services:
+  database:
+    container_name: indexer-doge-database
+    image: postgres:16
+    env_file:
+      - doge-indexer.env
+    ports:
+      - 127.0.0.1:25432:5432
+    restart: unless-stopped
+    volumes:
+      - doge-indexer-database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+
+  verification-server:
+    image: verifier-indexer-api
+    container_name: indexer-doge-verification-server
+    restart: unless-stopped
+    env_file:
+      - verifier-api.env
+    depends_on:
+      - database
+    ports:
+      - 9502:3100
+
+  indexer-server:
+    container_name: indexer-doge-server
+    image: verifier-utxo-indexer
+    environment:
+      DB_PORT: 5432
+      DB_HOST: database
+    env_file:
+      - doge-indexer.env
+    ports:
+      - 127.0.0.1:8402:8400
+    depends_on:
+      - database
+    restart: unless-stopped
+    volumes:
+      - doge-indexer-static:/appdata/static
+      - doge-indexer-media:/appdata/media
+
+  indexer-indexer:
+    container_name: indexer-doge-index-blocks
+    image: verifier-utxo-indexer
+    command: django-management block_indexing
+    environment:
+      DB_PORT: 5432
+      DB_HOST: database
+    env_file:
+      - doge-indexer.env
+    depends_on:
+      - database
+    restart: unless-stopped
+    volumes:
+      - doge-indexer-static:/appdata/static
+      - doge-indexer-media:/appdata/media
+
+  indexer-prune:
+    container_name: indexer-doge-prune-blocks
+    image: verifier-utxo-indexer
+    command: django-management block_pruning
+    environment:
+      DB_PORT: 5432
+      DB_HOST: database
+    env_file:
+      - doge-indexer.env
+    depends_on:
+      - database
+    restart: unless-stopped
+    volumes:
+      - doge-indexer-static:/appdata/static
+      - doge-indexer-media:/appdata/media
+
+volumes:
+  doge-indexer-static:
+  doge-indexer-database:
+  doge-indexer-media:
