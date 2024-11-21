@@ -1,11 +1,33 @@
+x-django: &django
+  image: verifier-utxo-indexer
+  env_file:
+    - indexer.env
+  environment:
+    DB_PORT: 5432
+    DB_HOST: database
+  volumes:
+    - btc-indexer-static:/appdata/static
+    - btc-indexer-media:/appdata/media
+  restart: unless-stopped
+  depends_on:
+    database:
+      condition: service_healthy
+
+x-django-management: &django-management
+  <<: *django
+  depends_on:
+    database:
+      condition: service_healthy
+    indexer-server:
+      condition: service_healthy
 
 
 services:
   database:
-    container_name: indexer-btc-database
+    container_name: verifier-btc-database
     image: postgres:16
     env_file:
-      - btc-indexer.env
+      - database.env
     ports:
       - 127.0.0.1:25431:5432
     restart: unless-stopped
@@ -13,66 +35,41 @@ services:
       - btc-indexer-database:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready"]
+      start_period: 60s
+      start_interval: 2s
 
-  verification-server:
+  verifier:
     image: verifier-indexer-api
-    container_name: indexer-btc-verification-server
-    restart: unless-stopped
+    container_name: verifier-btc-verifier
     env_file:
-      - verifier-api.env
+      - verifier.env
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+    restart: unless-stopped
     ports:
       - 9501:3100
 
   indexer-server:
-    container_name: indexer-btc-server
-    image: verifier-utxo-indexer
-    environment:
-      DB_PORT: 5432
-      DB_HOST: database
-    env_file:
-      - btc-indexer.env
+    <<: *django
+    container_name: verifier-btc-server
     ports:
       - 127.0.0.1:8401:8400
-    depends_on:
-      - database
-    restart: unless-stopped
-    volumes:
-      - btc-indexer-static:/appdata/static
-      - btc-indexer-media:/appdata/media
+    healthcheck:
+      test: ["CMD", "curl", "-s", "--fail", "-o", "/dev/null", "http://127.0.0.1:8400/metrics"]
+      interval: 60s
+      start_period: 60s
+      start_interval: 2s
 
   indexer-indexer:
-    container_name: indexer-btc-index-blocks
-    image: verifier-utxo-indexer
+    <<: *django-management
+    container_name: verifier-btc-index-blocks
     command: django-management block_indexing
-    environment:
-      DB_PORT: 5432
-      DB_HOST: database
-    env_file:
-      - btc-indexer.env
-    depends_on:
-      - database
-    restart: unless-stopped
-    volumes:
-      - btc-indexer-static:/appdata/static
-      - btc-indexer-media:/appdata/media
 
   indexer-prune:
-    container_name: indexer-btc-prune-blocks
-    image: verifier-utxo-indexer
+    <<: *django-management
+    container_name: verifier-btc-prune-blocks
     command: django-management block_pruning
-    environment:
-      DB_PORT: 5432
-      DB_HOST: database
-    env_file:
-      - btc-indexer.env
-    depends_on:
-      - database
-    restart: unless-stopped
-    volumes:
-      - btc-indexer-static:/appdata/static
-      - btc-indexer-media:/appdata/media
 
 volumes:
   btc-indexer-static:

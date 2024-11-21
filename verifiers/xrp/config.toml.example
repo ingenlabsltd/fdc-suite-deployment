@@ -1,19 +1,20 @@
 [db]
-username = "xrpindexer"
-password = "change_this"
-db_name = "xrpindexer"
+username = "db"
+password = "${XRP_DB_PASSWORD}"
+db_name = "db"
 host = "database"
 port = 5432
 drop_table_at_start = false
+history_drop = 1296000
 
 [indexer]
 confirmations = 0
 max_block_range = 100
 max_concurrency = 10
-start_block_number = 1027000
+start_block_number = ${XRP_START_BLOCK_NUMBER}
 
 [blockchain]
-url = "node_rpc"
+url = "${XRP_NODE_URL}"
 
 [timeout]
 timeout_millis = 3000

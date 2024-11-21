@@ -5,10 +5,5 @@ services:
     restart: unless-stopped
     ports:
       - 9800:9800
-    environment:
-      PORT: 9800
-      API_KEYS: ${API_KEYS}
-      RPC_FLR: ${RPC_FLR}
-      RPC_ETH: ${RPC_ETH}
-      APP_BASE_PATH: ${APP_BASE_PATH}
-      TESTNET: ${TESTNET}
+    env_file:
+      - verifier.env

@@ -5,37 +5,38 @@ services:
     container_name: indexer-xrp-database
     image: postgres:16
     env_file:
-      - xrp-indexer.env
+      - database.env
     ports:
-      - 127.0.0.1:55432:5432
+      - 127.0.0.1:25433:5432
     restart: unless-stopped
     volumes:
       - xrp-indexer-database:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready"]
+      start_period: 60s
+      start_interval: 2s
 
   indexer:
     container_name: indexer-xrp-indexer
-    image: verifier-xrp-indexer
-    environment:
-      DB_PORT: 5432
-      DB_HOST: database
+    image: ghcr.io/flare-foundation/verifier-xrp-indexer:main
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     restart: unless-stopped
     volumes:
       - ./config.toml:/app/config.toml
 
-  verification-server:
+  verifier:
     image: verifier-indexer-api
     container_name: indexer-xrp-verifier
     env_file:
-      - verifier-api.env
+      - verifier.env
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     restart: unless-stopped
     ports:
-      - 9505:3100
+      - 9503:3100
 
 
 volumes:
