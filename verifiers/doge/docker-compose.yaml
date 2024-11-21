@@ -1,7 +1,7 @@
 name: verifier-doge
 
 x-django: &django
-  image: verifier-utxo-indexer
+  image: ghcr.io/flare-foundation/verifier-utxo-indexer
   env_file:
     - indexer.env
   environment:
@@ -41,7 +41,7 @@ services:
       start_interval: 2s
 
   verifier:
-    image: verifier-indexer-api
+    image: ghcr.io/flare-foundation/verifier-indexer-api
     container_name: verifier-doge-verifier
     env_file:
       - verifier.env
