@@ -1,0 +1,16 @@
+
+
+services:
+  bitcoin-node:
+    image: flarefoundation/bitcoin:28.0
+    container_name: node-mainnet-btc
+    restart: unless-stopped
+    ports:
+      - 8332:8332
+      - 8333:8333
+    volumes:
+      - bitcoin-mainnet-data:/opt/bitcoin/.bitcoin/db
+      - ./bitcoin.conf:/opt/bitcoin/.bitcoin/bitcoin.conf
+
+volumes:
+  bitcoin-mainnet-data:
