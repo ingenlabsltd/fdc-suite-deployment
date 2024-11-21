@@ -1,8 +1,8 @@
-
+name: verifier-xrp
 
 services:
   database:
-    container_name: indexer-xrp-database
+    container_name: verifier-xrp-database
     image: postgres:16
     env_file:
       - database.env
@@ -17,7 +17,7 @@ services:
       start_interval: 2s
 
   indexer:
-    container_name: indexer-xrp-indexer
+    container_name: verifier-xrp-indexer
     image: ghcr.io/flare-foundation/verifier-xrp-indexer:main
     depends_on:
       database:
@@ -28,7 +28,7 @@ services:
 
   verifier:
     image: verifier-indexer-api
-    container_name: indexer-xrp-verifier
+    container_name: verifier-xrp-verifier
     env_file:
       - verifier.env
     depends_on:

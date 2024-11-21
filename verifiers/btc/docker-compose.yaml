@@ -1,3 +1,5 @@
+name: verifier-btc
+
 x-django: &django
   image: verifier-utxo-indexer
   env_file:

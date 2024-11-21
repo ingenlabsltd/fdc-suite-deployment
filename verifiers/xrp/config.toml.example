@@ -18,3 +18,7 @@ url = "${XRP_NODE_URL}"
 
 [timeout]
 timeout_millis = 3000
+
+[logger]
+level = "DEBUG"
+console = true

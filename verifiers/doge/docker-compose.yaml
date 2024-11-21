@@ -1,3 +1,5 @@
+name: verifier-doge
+
 x-django: &django
   image: verifier-utxo-indexer
   env_file:
