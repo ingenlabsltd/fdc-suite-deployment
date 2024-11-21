@@ -1,0 +1,29 @@
+### VisualStudioCode template
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+/build
+/bin
+/tmp_data
+/tmp
+/temp
+/cache
+/logs
+*.log
+
+## Misc
+nul
+.env
+*.env
+
+config.toml
+
+# alerts
+status.json
+
+# local configs
+# .indexer.remote.dev.read.env
+# .indexer.remote.dev.write.env
