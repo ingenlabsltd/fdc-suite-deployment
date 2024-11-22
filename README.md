@@ -19,9 +19,13 @@ EVM based chains (Ethereum, Flare, Songbird) use a verifier api server that dire
     - DOGE - [flare-foundation/verifier-utxo-indexer](https://github.com/flare-foundation/verifier-utxo-indexer) and [flare-foundation/verifier-indexer-api](https://github.com/flare-foundation/verifier-indexer-api)
     - XRP - [flare-foundation/verifier-xrp-indexer](https://github.com/flare-foundation/verifier-xrp-indexer) and [flare-foundation/verifier-indexer-api](https://github.com/flare-foundation/verifier-indexer-api)
 
-Bitcoin, Dogecoin and Ripple use an indexer that creates a local database with data from the blockchain. This is then exposed via api by verifier api server.
-
 - EVM verifier - [flare-foundation/evm-verifier](https://github.com/flare-foundation/evm-verifier)
+
+EVM verifier also requires FLR and SGB nodes, which are not part of this repository.
+
+The components listed here are all required to run a full FDC suite, but they are not required to be deployed from this repository. For example, if you already have a compatible Bitcoin rpc node, you can configure this repo to run everything else except for BTC node.
+
+This repository can also be used multiple times to split this deployment across multiple servers.
 
 ## Hardware Requirements
 
@@ -41,7 +45,7 @@ If you don't want to deploy everything on a single server, separate components c
 
 ## Software Requirements
 
-The Attestation Suite was tested on Debian 12 and Ubuntu 22.04.
+FDC suite deploy was tested on Debian 12 and Ubuntu 22.04.
 
 Additional required software:
 
@@ -70,7 +74,7 @@ Docker images are automatically built and published to github container registry
 docker build -t <image-tag> .
 ```
 
-replace image tag with the tag that is used `docker-compose.yaml` files that use this image.
+replace image tag with the tag that is used in `docker-compose.yaml` files that use this image or modify docker-compose files to use your image tag.
 
 ## Step 2 Configuration
 
@@ -114,26 +118,32 @@ Default configuration doesn't need any additional configuration.
 
 #### ETH
 
-Configure the jwt.hex for authentication. Create the file `nodes-mainnet/eth/jwt.hex`. Or generate the password randomly:
+Configure file `nodes-mainnet/eth/jwt.hex` for authentication. To generate the password randomly run:
 ``` bash
 openssl rand -hex 32 > nodes-mainnet/eth/jwt.hex
 ```
 
-### 3.2 Simple configuration for indexers and verifiers
+Blockchain nodes expose all ports by default.
 
-For a simple configuration the only file that needs to be edited is `.env` file in the root of this repository. Copy `.env.example` file to `.env` and edit it.
+### 2.2 Simple configuration for indexers and verifiers
 
-For rpc nodes, fill in the authentication data you created in the previous step. If you run blockchain nodes and verifiers on the same server, you can use the ip `172.17.0.1` to reach the nodes.
+Files `.env.example` and `generate-config.sh` files in the root of this repository are used to configure indexers and verifiers. They don't configure anything related to blockchain nodes.
 
-Indxers will start indexing the blockchain with the block number configured in `_START_BLOCK_NUMBER` variables. This needs to be set the first time when you start the indexers to avoid indexing too much data. FDC requires at least 14 days of history, so pick a block number that was finalized 14 days ago. On later restarts indexers will start indexing from the latest block in the database.
+For a simple configuration of verifiers the only file that needs to be edited is `.env` file in the root of this repository. Copy `.env.example` file to `.env` and edit it.
+
+Inside this file:
+
+For RPC nodes, fill in the authentication data you created in the previous step. If you run blockchain nodes and verifiers on the same server, you can use the ip `172.17.0.1` to reach the nodes.
+
+Indexers will start indexing the blockchain with the block number configured in `*_START_BLOCK_NUMBER` variables. This needs to be set the first time when you start the indexers to avoid indexing too much data. FDC requires at least 14 days of history, so pick a block number that was finalized 14 days ago. On later restarts indexers will start indexing from the latest block in the database.
 
 Set `TESTNET` to `true` if you are running verifiers for testnets.
 
-Set `VERIFIER_API_KEYS` to api keys that will have access to verifier api servers. One or multiple comma separated keys can be configured. You will likely need at least one key for FDC client that will call verifier api servers.
+Set `VERIFIER_API_KEYS` to api keys that will have access to verifier api servers. One or more comma separated keys can be configured. You will likely need at least one key for FDC client that will call verifier api servers.
 
-`*_DB_PASSWORD` variables are used internally for the indexer database. If you don't know you probably don't need to access the database, so set those passwords to a random string.
+`*_DB_PASSWORD` variables are used internally for the indexer database. If you don't know why you probably don't need to access the database, so set those passwords to a random string.
 
-### 3.3 Generating configs
+### 2.3 Generating configs for indexers and verifiers
 
 from the root of this repo, run `./generate-config.sh`
 
@@ -144,15 +154,15 @@ This script uses the values from `.env` and generates config files from `*.examp
 - verifiers/xrp/
 - evm-verifier/
 
-## Step 4 Running
+## Step 3 Running
 
-### 4.1 Starting blockchain nodes
+### 3.1 Starting blockchain nodes
 
 cd into correct directory (example `nodes-mainnet/btc`) and run `docker compose up -d`.
 
 Do this for all blockchain nodes you plan to run on the current server.
 
-### 4.2 Starting indexers and verifiers 
+### 3.2 Starting indexers and verifiers
 
 cd into correct directory (example `verifiers/btc`) and run `docker compose up -d`.
 
