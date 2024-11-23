@@ -13,6 +13,7 @@ config_files=(
     "verifiers/xrp/database.env"
     "verifiers/xrp/config.toml"
     "verifiers/xrp/verifier.env"
+    "evm-verifier/verifier.env"
 )
 
 for config_file in "${config_files[@]}"; do
