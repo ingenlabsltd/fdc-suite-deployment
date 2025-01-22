@@ -8,7 +8,7 @@ drop_table_at_start = false
 history_drop = 1296000
 
 [indexer]
-confirmations = 0
+confirmations = 1
 max_block_range = 100
 max_concurrency = 10
 start_block_number = ${XRP_START_BLOCK_NUMBER}
