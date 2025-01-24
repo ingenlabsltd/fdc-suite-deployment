@@ -1,6 +1,6 @@
 services:
   evm-verifier:
-    image: ghcr.io/flare-foundation/evm-verifier
+    image: ghcr.io/flare-foundation/evm-verifier:v1.0.3
     container_name: evm-verifier
     restart: unless-stopped
     ports:
