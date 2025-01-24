@@ -18,7 +18,7 @@ services:
 
   indexer:
     container_name: verifier-xrp-indexer
-    image: ghcr.io/flare-foundation/verifier-xrp-indexer
+    image: ghcr.io/flare-foundation/verifier-xrp-indexer:v1.0.1
     depends_on:
       database:
         condition: service_healthy
@@ -27,7 +27,7 @@ services:
       - ./config.toml:/app/config.toml
 
   verifier:
-    image: ghcr.io/flare-foundation/verifier-indexer-api
+    image: ghcr.io/flare-foundation/verifier-indexer-api:v1.0.0
     container_name: verifier-xrp-verifier
     env_file:
       - verifier.env
