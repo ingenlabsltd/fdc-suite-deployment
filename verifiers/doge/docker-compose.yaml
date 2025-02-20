@@ -1,7 +1,7 @@
 name: verifier-doge
 
 x-django: &django
-  image: ghcr.io/flare-foundation/verifier-utxo-indexer:v1.0.1
+  image: ghcr.io/flare-foundation/verifier-utxo-indexer:v1.0.2
   env_file:
     - indexer.env
   environment:
