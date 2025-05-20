@@ -27,7 +27,7 @@ services:
       - ./config.toml:/app/config.toml
       - ./init-config.sh:/app/init-config.sh
     environment:
-      - FORCE_UPDATE_START_BLOCK=true
+      - FORCE_UPDATE_START_BLOCK=false
       - DIFFERENCE_BLOCK_FORCE_CHANGE_START_BLOCK=300000
     entrypoint: ["/bin/bash", "/app/init-config.sh"]
     
