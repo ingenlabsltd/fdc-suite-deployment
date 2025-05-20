@@ -53,8 +53,7 @@ if [[ "$ledger_range" =~ ^([0-9]+)-([0-9]+)$ ]]; then
     fi
 else
     echo "Could not parse complete_ledgers: $ledger_range"
-    echo "Fallback: updating to $cluster_start_block"
-    update_start_block_number
+    echo "Using start_block_number value."
 fi
 
 exec ./xrp-indexer
